@@ -19,7 +19,8 @@ type Species = Database["public"]["Tables"]["species"]["Row"];
 
 export default function SpeciesCard({ species, sessionId }: { species: Species; sessionId: string }) {
   // Check if the current user is the author of this species
-  const isAuthor = species.author === sessionId;
+  // Use strict comparison and ensure both are strings
+  const isAuthor = String(species.author) === String(sessionId);
 
   return (
     <div className="m-4 w-72 min-w-72 flex-none rounded border-2 p-3 shadow">
@@ -35,7 +36,7 @@ export default function SpeciesCard({ species, sessionId }: { species: Species; 
         <SpeciesDetailsDialog species={species}>
           <Button className="flex-1">Learn More</Button>
         </SpeciesDetailsDialog>
-        {isAuthor && <EditSpeciesDialog species={species} />}
+        {isAuthor && <EditSpeciesDialog species={species} sessionId={sessionId} />}
       </div>
     </div>
   );
