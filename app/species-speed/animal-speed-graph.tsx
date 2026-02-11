@@ -29,10 +29,11 @@ export default function AnimalSpeedGraph() {
     csv("/sample_animals.csv")
       .then((data) => {
         // Process and filter the data
-        // Type assertion: CSV data comes as Record<string, string>
-        const processed: AnimalDatum[] = (data as Array<Record<string, string>>)
+        // Type assertion: CSV data comes as Record<string, string | undefined>
+        const processed: AnimalDatum[] = (data as Array<Record<string, string | undefined>>)
           .map((row) => {
-            const speed = parseFloat(row.speed);
+            const speedStr = row.speed;
+            const speed = speedStr ? parseFloat(speedStr) : NaN;
             const name = row.name?.trim();
             const diet = row.diet?.trim().toLowerCase();
 
