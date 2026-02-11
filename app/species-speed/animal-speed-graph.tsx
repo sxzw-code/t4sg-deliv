@@ -26,10 +26,11 @@ export default function AnimalSpeedGraph() {
 
   // Load CSV data
   useEffect(() => {
-    csv<{ name: string; speed: string; diet: string }>("/sample_animals.csv")
+    csv("/sample_animals.csv")
       .then((data) => {
         // Process and filter the data
-        const processed: AnimalDatum[] = data
+        // Type assertion: CSV data comes as Record<string, string>
+        const processed: AnimalDatum[] = (data as Array<Record<string, string>>)
           .map((row) => {
             const speed = parseFloat(row.speed);
             const name = row.name?.trim();
