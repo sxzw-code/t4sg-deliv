@@ -76,6 +76,25 @@ export default function EditSpeciesDialog({ species, sessionId }: EditSpeciesDia
   // Use strict comparison and ensure both are strings
   const isAuthor = String(species.author) === String(sessionId);
 
+  // Set default values for the form to the existing species data
+  // Must be defined before useForm hook (React hooks rules)
+  const defaultValues: Partial<FormData> = {
+    scientific_name: species.scientific_name,
+    common_name: species.common_name,
+    kingdom: species.kingdom,
+    total_population: species.total_population,
+    image: species.image,
+    description: species.description,
+  };
+
+  // Instantiate form functionality with React Hook Form, passing in the Zod schema (for validation) and default values
+  // Must be called before any conditional returns (React hooks rules)
+  const form = useForm<FormData>({
+    resolver: zodResolver(speciesSchema),
+    defaultValues,
+    mode: "onChange",
+  });
+
   // If the user is not the author, don't render the dialog at all
   if (!isAuthor) {
     return null;
@@ -94,23 +113,6 @@ export default function EditSpeciesDialog({ species, sessionId }: EditSpeciesDia
     }
     setOpen(newOpen);
   };
-
-  // Set default values for the form to the existing species data
-  const defaultValues: Partial<FormData> = {
-    scientific_name: species.scientific_name,
-    common_name: species.common_name,
-    kingdom: species.kingdom,
-    total_population: species.total_population,
-    image: species.image,
-    description: species.description,
-  };
-
-  // Instantiate form functionality with React Hook Form, passing in the Zod schema (for validation) and default values
-  const form = useForm<FormData>({
-    resolver: zodResolver(speciesSchema),
-    defaultValues,
-    mode: "onChange",
-  });
 
   const onSubmit = async (input: FormData) => {
     // Double-check authorization before submitting (defense in depth)
@@ -401,7 +403,14 @@ export default function EditSpeciesDialog({ species, sessionId }: EditSpeciesDia
             >
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                void handleDeleteConfirm();
+              }}
+              disabled={isDeleting}
+            >
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>

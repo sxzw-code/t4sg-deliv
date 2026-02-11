@@ -105,7 +105,14 @@ export default function DeleteSpeciesDialog({ species, sessionId }: DeleteSpecie
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => {
+              void handleDelete();
+            }}
+            disabled={isDeleting}
+          >
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
